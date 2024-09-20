@@ -8,7 +8,5 @@
 ├── sql_scripts
 │   └── sql files...
 └── source_database
-    ├── data
-    │   └── mysql files...
-    └── init.sql - file that init the database
+    ├── mysql files
 ```
