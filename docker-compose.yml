@@ -6,13 +6,13 @@ services:
         - "8081:8081"
       restart: always
       environment:
-        - MYSQL_USER=test
-        - MYSQL_PASSWORD=test
-        - MYSQL_DATABASE=test
-        - MYSQL_ROOT_PASSWORD=hard_pass
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       volumes:
-        - ./source_database/data:/var/lib/mysql
-        - ./source_database/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./source_database:/var/lib/mysql
+        - ./sql_scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     adminer:
       image: adminer

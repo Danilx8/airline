@@ -5,6 +5,8 @@
 ```
 ├── README.md
 ├── docker-compose.yml
+├── sql_scripts
+│   └── sql files...
 └── source_database
     ├── data
     │   └── mysql files...

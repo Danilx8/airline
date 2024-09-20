@@ -2,5 +2,8 @@
 .DS_Store
 
 # dir "data" - dir for mounting mysql
-source_database/data/*
-!source_database/data/empty.txt
+source_database/*
+!source_database/empty.txt
+
+# creds
+.env
