@@ -1,0 +1,9 @@
+# "base" dir which are not needed
+.DS_Store
+
+# dir "data" - dir for mounting mysql
+source_database/*
+!source_database/empty.txt
+
+# creds
+.env
