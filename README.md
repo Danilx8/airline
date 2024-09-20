@@ -8,5 +8,5 @@
 ├── sql_scripts
 │   └── sql files...
 └── source_database
-    ├── mysql files
+    └── mysql files
 ```
