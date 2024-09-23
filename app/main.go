@@ -3,51 +3,21 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
+
+	"app/app/bootstrap"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db = make(map[string]string)
 
-// TODO: перенести всю логику работы с env в другой файл
-func initEnv() {
-	if err := godotenv.Load(); err != nil {
-		fmt.Errorf("Not found env file")
-	}
-}
-
-func getEnv(key string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return ""
-}
-
-func getCreds() string {
-	initEnv()
-	userName := getEnv("MYSQL_USER")
-	userPassword := getEnv("MYSQL_PASSWORD")
-	dbHost := getEnv("DB_HOST")
-	dbPort := getEnv("DB_PORT")
-	tableName := getEnv("MYSQL_DATABASE")
-	creds := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		userName, userPassword,
-		dbHost, dbPort, tableName,
-	)
-	//fmt.Println(creds)
-	return creds
-}
-
 func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
-	creds := getCreds()
-	_, err := gorm.Open(mysql.Open(creds), &gorm.Config{})
+	envFile := bootstrap.NewEnv()
+	_, err := gorm.Open(mysql.Open(envFile.GetCreds()), &gorm.Config{})
 	if err != nil {
 		fmt.Errorf("Error while init connection with db: %w", err)
 	}
