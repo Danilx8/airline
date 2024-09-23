@@ -5,16 +5,17 @@ import (
 	"net/http"
 
 	"app/app/bootstrap"
+	"app/app/domain"
+	"app/app/repository"
 
 	"github.com/gin-gonic/gin"
 )
-
-var db = make(map[string]string)
 
 func setupRouter(app bootstrap.Application) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+	userRepository := repository.NewUserRepository(app.DB)
 
 	// Ping test
 	r.GET("/ping", func(c *gin.Context) {
@@ -22,50 +23,44 @@ func setupRouter(app bootstrap.Application) *gin.Engine {
 	})
 
 	// Get user value
-	//r.GET("/user/:name", func(c *gin.Context) {
-	//	user := c.Params.ByName("name")
-	//	value, ok := db[user]
-	//	if ok {
-	//		c.JSON(http.StatusOK, gin.H{"user": user, "value": value})
-	//	} else {
-	//		c.JSON(http.StatusOK, gin.H{"user": user, "status": "no value"})
-	//	}
-	//})
+	r.GET("/user/fetch", func(c *gin.Context) {
+		var users []domain.User
+		if err := userRepository.Fetch(&users); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"status": "Not found!"})
+			return
+		}
+		c.JSON(http.StatusOK, users)
+	})
 
-	// Authorized group (uses gin.BasicAuth() middleware)
-	// Same than:
-	// authorized := r.Group("/")
-	// authorized.Use(gin.BasicAuth(gin.Credentials{
-	//	  "foo":  "bar",
-	//	  "manu": "123",
-	//}))
-	//authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-	//	"foo":  "bar", // user:foo password:bar
-	//	"manu": "123", // user:manu password:123
-	//}))
+	// Create user
+	r.POST("/user/create", func(c *gin.Context) {
+		var user domain.User
 
-	/* example curl for /admin with basicauth header
-	   Zm9vOmJhcg== is base64("foo:bar")
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "Can't parse!"})
+			return
+		}
+		id, err := userRepository.Create(&user)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "Bad request!"})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"id": id})
+		fmt.Printf("Post %+v\n", user)
+	})
 
-		curl -X POST \
-	  	http://localhost:8080/admin \
-	  	-H 'authorization: Basic Zm9vOmJhcg==' \
-	  	-H 'content-type: application/json' \
-	  	-d '{"value":"bar"}'
-	*/
-	//authorized.POST("admin", func(c *gin.Context) {
-	//	user := c.MustGet(gin.AuthUserKey).(string)
+	// Update user
+	r.PUT("/user/update", func(c *gin.Context) {
+		var user domain.User
 
-	//	// Parse JSON
-	//	var json struct {
-	//		Value string `json:"value" binding:"required"`
-	//	}
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "Can't parse!"})
+			return
+		}
+		userRepository.Update(&user)
+	})
 
-	//	if c.Bind(&json) == nil {
-	//		db[user] = json.Value
-	//		c.JSON(http.StatusOK, gin.H{"status": "ok"})
-	//	}
-	//})
+	// TODO: Delete of user
 
 	return r
 }

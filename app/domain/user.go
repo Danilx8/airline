@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"context"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -9,20 +8,24 @@ const (
 	CollectionUser = "users"
 )
 
+// TODO: add validation
 type User struct {
-	ID        int64  `bson:"_id"`
-	FirstName string `bson:"firstName"`
-	LastName  string `bson:"lastName"`
-	Email     string `bson:"email"`
-	Password  string `bson:"password"`
-	BirthDate string `bson:"birthDate"`
-	Active    bool   `bson:"active"`
-	OfficeID  int64  `bson:"officeId"`
-	RoleID    int64  `bson:"roleId"`
+	ID        int64  `gorm:"primaryKey;autoIncrement"`
+	FirstName string `gorm:"column:FirstName"`
+	LastName  string `gorm:"column:LastName"`
+	Email     string `gorm:"column:Email"`
+	Password  string `gorm:"column:Password"`
+	BirthDate string `gorm:"column:BirthDate"`
+	Active    bool   `gorm:"column:Active"`
+	OfficeID  int64  `gorm:"column:OfficeID"`
+	//Office    Office //`gorm:"column:OfficeID;foreignKey:ID"`
+	RoleID int64 `gorm:"column:RoleID"`
+	//Role      Role   //`gorm:"column:"foreignKey:RoleID;references:ID"`
 }
 
 type UserRepository interface {
-	Create(c context.Context, user *User) (int64, error)
-	Fetch(c context.Context) ([]User, error)
-	GetByID(c context.Context, id int64) (User, error)
+	Create(user *User) (int64, error)
+	Fetch(users *[]User) error
+	GetByID(id int64) (User, error)
+	Update(user *User) error
 }
