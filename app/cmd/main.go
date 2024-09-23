@@ -7,20 +7,13 @@ import (
 	"app/app/bootstrap"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 var db = make(map[string]string)
 
-func setupRouter() *gin.Engine {
+func setupRouter(app bootstrap.Application) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
-	envFile := bootstrap.NewEnv()
-	_, err := gorm.Open(mysql.Open(envFile.GetCreds()), &gorm.Config{})
-	if err != nil {
-		fmt.Errorf("Error while init connection with db: %w", err)
-	}
 	r := gin.Default()
 
 	// Ping test
@@ -78,7 +71,12 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	r := setupRouter()
+	app, err := bootstrap.App()
+	if err != nil {
+		fmt.Println("Error while init application: %w", err)
+	}
+	// TODO: вынести роутеры в другую папку
+	r := setupRouter(app)
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
