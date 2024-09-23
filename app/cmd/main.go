@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: rewrite return error from base string to more details
 func setupRouter(app bootstrap.Application) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
@@ -57,10 +58,28 @@ func setupRouter(app bootstrap.Application) *gin.Engine {
 			c.JSON(http.StatusBadRequest, gin.H{"status": "Can't parse!"})
 			return
 		}
-		userRepository.Update(&user)
+
+		if err := userRepository.Update(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "Error update of row"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": "Complete update of row"})
 	})
 
 	// TODO: Delete of user
+	r.DELETE("/user/delete", func(c *gin.Context) {
+		var user domain.User
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "Can't parse!"})
+			return
+		}
+
+		if err := userRepository.Delete(user.ID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "Error delete of row"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": "Complete delete of row"})
+	})
 
 	return r
 }
