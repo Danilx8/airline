@@ -65,11 +65,11 @@ func (u userRepository) Update(user *domain.User) error {
 }
 func (u userRepository) Delete(id int64) error {
 	var user domain.User
-	result := u.database.Where("ID = ?", id).First(user)
+	result := u.database.Where("ID = ?", id).First(&user)
 	if result.Error != nil {
 		return fmt.Errorf("failed to found user with id %d: %w", id, result.Error)
 	}
-	result = u.database.Delete(user)
+	result = u.database.Delete(&user)
 	if result.Error != nil {
 		return fmt.Errorf("failed to delete user with id %d: %w", id, result.Error)
 	}
