@@ -14,6 +14,8 @@ type Env struct {
 	DBTableName    string `mapstructure:"MYSQL_DATABASE"`
 	DBHost         string `mapstructure:"DB_HOST"`
 	DBPort         string `mapstructure:"DB_PORT"`
+	ContextTimeout int    `mapstructure:"CONTEXT_TIMEOUT"`
+	ServerAddress  string `mapstructure:"SERVER_ADDRESS"`
 }
 
 func NewEnv() *Env {
