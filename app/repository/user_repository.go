@@ -2,67 +2,77 @@ package repository
 
 import (
 	"app/app/domain"
-	"context"
-	"database/sql"
-	"errors"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	"reflect"
+
+	"gorm.io/gorm"
 )
 
 type userRepository struct {
-	database *sql.DB
+	database *gorm.DB
 }
 
-func NewUserRepository(db *sql.DB) domain.UserRepository {
+func NewUserRepository(db *gorm.DB) domain.UserRepository {
 	return &userRepository{
 		database: db,
 	}
 }
 
-func (u *userRepository) Create(c context.Context, user *domain.User) (int64, error) {
-	result, err := u.database.Exec("INSERT INTO users (Email, Password, FirstName, LastName, Birthdate, OfficeID, RoleID) VALUES (?, ?, ?)",
-		user.Email, user.Password, user.FirstName, user.LastName, user.BirthDate, user.OfficeID, 2)
-
-	if err != nil {
-		return 0, err
+func (u *userRepository) Create(user *domain.User) (int64, error) {
+	result := u.database.Create(&user)
+	if result.Error != nil {
+		return 0, result.Error
 	}
-
-	id, err := result.LastInsertId()
-	return id, err
+	//TODO: Подумать о смене сигнатуры, так как в юзер присваивается id по ссылке
+	return user.ID, result.Error
 }
 
-func (u userRepository) Fetch(c context.Context) ([]domain.User, error) {
-	var users []domain.User
-
-	result, err := u.database.Query("SELECT * FROM users WHERE RoleID != 1")
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch users: %w", err)
+func (u userRepository) Fetch(users *[]domain.User) error {
+	// я видел, что ты возращаешь по бачам, что хорошо, однако у нас будет мало записей,
+	// поэтому можно будет просто дергать всю таблицу, но можем обсудить
+	result := u.database.Find(&users)
+	if result.Error != nil {
+		return fmt.Errorf("failed to fetched users: %w", result.Error)
 	}
-	defer result.Close()
-	for result.Next() {
-		var user domain.User
-		if err := result.Scan(&user.ID, &user.Email, &user.FirstName, &user.LastName, &user.OfficeID, &user.BirthDate, &user.Active); err != nil {
-			return nil, fmt.Errorf("failed to fetch users: %w", err)
+
+	return nil
+}
+
+func (u userRepository) Update(user *domain.User) error {
+	userOld := &domain.User{}
+	result := u.database.Where("ID = ?", user.ID).First(userOld)
+
+	if result.Error != nil {
+		return fmt.Errorf("failed to fetch user with id %d: %w", user.ID, result.Error)
+	}
+	userVal := reflect.ValueOf(user).Elem()
+	userOldVal := reflect.ValueOf(userOld).Elem()
+
+	for i := 0; i < userVal.NumField(); i++ {
+		value := userVal.Field(i)
+		if !value.IsValid() || userVal.Type().Field(i).Name == "ID" {
+			continue
 		}
-		users = append(users, user)
+		userOldVal.Field(i).Set(value)
 	}
 
-	if err := result.Err(); err != nil {
-		return nil, fmt.Errorf("failed to fetch users: %w", err)
+	result = u.database.Save(userOld)
+	if result.Error != nil {
+		return fmt.Errorf("failed to update user with id %d: %w", user.ID, result.Error)
 	}
 
-	return users, nil
+	return nil
 }
-
-func (u userRepository) GetByID(c context.Context, id int64) (domain.User, error) {
+func (u userRepository) Delete(id int64) error {
 	var user domain.User
-
-	row := u.database.QueryRow("SELECT * FROM users WHERE ID = ?", id)
-	if err := row.Scan(&user.ID, &user.Email, &user.FirstName, &user.LastName, &user.OfficeID, &user.BirthDate, &user.Active); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return user, fmt.Errorf("user with id %d not found", id)
-		}
-		return user, fmt.Errorf("failed to fetch user with id %d: %w", id, err)
+	result := u.database.Where("ID = ?", id).First(&user)
+	if result.Error != nil {
+		return fmt.Errorf("failed to found user with id %d: %w", id, result.Error)
 	}
-	return user, nil
+	result = u.database.Delete(&user)
+	if result.Error != nil {
+		return fmt.Errorf("failed to delete user with id %d: %w", id, result.Error)
+	}
+
+	return nil
 }

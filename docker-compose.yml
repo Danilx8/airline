@@ -3,7 +3,7 @@ services:
       image:  mysql:9.0
       command: --local-infile=1
       ports:
-        - "8081:8081"
+        - "${DB_PORT}:3306"
       restart: always
       environment:
         - MYSQL_USER=${MYSQL_USER}
@@ -11,13 +11,13 @@ services:
         - MYSQL_DATABASE=${MYSQL_DATABASE}
         - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       volumes:
-        - ./source_database:/var/lib/mysql
+        - source_database:/var/lib/mysql
         - ./sql_scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     adminer:
       image: adminer
       ports:
-        - "8080:8080"
+        - "8082:8080"
       environment:
         ADMINER_DEFAULT_SERVER: db
       depends_on:
