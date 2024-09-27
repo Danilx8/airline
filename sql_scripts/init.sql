@@ -121,8 +121,8 @@ CREATE TABLE `users` (
 CREATE TRIGGER after_users_insert
 AFTER INSERT ON `users`
 FOR EACH ROW
-    INSERT INTO `admin_panel` (`UserID`, `Status`, `Age`)
-    VALUES (NEW.ID, 1, TIMESTAMPDIFF(YEAR, NEW.Birthdate, CURDATE()));
+    INSERT INTO `admin_panel` (`UserID`, `Age`)
+    VALUES (NEW.ID, TIMESTAMPDIFF(YEAR, NEW.Birthdate, CURDATE()));
 
 --
 -- Table structure for table `user_status`
@@ -149,7 +149,6 @@ create table `admin_panel` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `UserID` int(11) NOT NULL,
   `Age` int(3) NOT NULL,
-  `Status` int(11) NOT NULL,
   PRIMARY KEY (`ID`),
   FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`)
 );
