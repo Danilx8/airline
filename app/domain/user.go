@@ -26,6 +26,7 @@ type User struct {
 type UserRepository interface {
 	Create(user *User) (int64, error)
 	Fetch(users *[]User) error
+	FetchAdmins(users *[]User) error
 	Update(user *User) error
 	Delete(id int64) error
 }
