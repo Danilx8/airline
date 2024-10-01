@@ -13,13 +13,13 @@ import (
 func main() {
 	file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatal("Failed to open log file:", err)
+		log.Fatalln("Failed to open log file:", err)
 	}
 	log.SetOutput(file)
 
 	app, err := bootstrap.App()
 	if err != nil {
-		log.Fatal("Error while init application: %w", err)
+		log.Fatalln("Error while init application: %w", err)
 	}
 
 	env := app.Env
@@ -33,11 +33,8 @@ func main() {
 
 	route.Setup(env, timeout, db, engine)
 
-	//url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
-	//engine.GET("/swagger/*any", ginSwagger.WrapHandler())
-
 	err = engine.Run(env.ServerAddress)
 	if err != nil {
-		log.Fatal("Error while run server: %w", err)
+		log.Fatalln("Error while run server: %w", err)
 	}
 }
