@@ -27,6 +27,7 @@ type UserRepository interface {
 	Create(user *User) (int64, error)
 	Fetch(users *[]User) error
 	FetchAdmins(users *[]User) error
+	FetchByEmail(email string, user *User) error
 	Update(user *User) error
 	Delete(id int64) error
 }

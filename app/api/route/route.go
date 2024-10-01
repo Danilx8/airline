@@ -10,4 +10,5 @@ import (
 func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engine) {
 	publicRouter := gin.Group("")
 	NewUserRouter(env, timeout, db, publicRouter)
+	NewAuthRouter(env, timeout, db, publicRouter)
 }
