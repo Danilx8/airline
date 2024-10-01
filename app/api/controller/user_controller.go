@@ -17,21 +17,11 @@ const (
 	EMPLOYEES = false
 )
 
-// GetEmployeeUsers airline
-//
-//	@Summary		Get all users in system that are not administrators
-//	@Description	get non-administrator users entities
-//	@ID				get-non-administrator-users
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	domain.User		"ok"
-//	@Failure		500	{object}	web.APIError	"error"
-//	@Router			/users [get]
 func (userController *UserController) GetEmployeeUsers(c *gin.Context) {
 	users, err := userController.UserUsecase.FetchAll(c, EMPLOYEES)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"UserController, GetEmployeeUsers": err.Error()})
 		return
 	}
 
@@ -44,7 +34,7 @@ func (userController *UserController) CreateUser(c *gin.Context) {
 	err := c.BindJSON(&user)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"UserController, CreateUser, fail binding model": err.Error()})
 		return
 	}
 
@@ -52,7 +42,7 @@ func (userController *UserController) CreateUser(c *gin.Context) {
 	userId, err = userController.UserUsecase.CreateUser(c, user)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"UserController, CreateUser, fail creating user": err.Error()})
 	}
 	c.JSON(http.StatusOK, gin.H{"userId": userId})
 }
@@ -63,14 +53,14 @@ func (userController *UserController) UpdateUser(c *gin.Context) {
 	err := c.BindJSON(&user)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"UserController, UpdateUser, fail binding model": err.Error()})
 		return
 	}
 
 	err = userController.UserUsecase.UpdateUser(c, user)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"UserController, UpdateUser, fail updating user": err.Error()})
 		return
 	}
 
@@ -82,13 +72,13 @@ func (userController *UserController) DeleteUser(c *gin.Context) {
 	err := c.BindJSON(&id)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"UserController, DeleteUser, fail binding id": err.Error()})
 	}
 
 	err = userController.UserUsecase.DeleteUser(c, id)
 	if err != nil {
 		log.Print(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"UserController, DeleteUser, fail deleting user": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true})
