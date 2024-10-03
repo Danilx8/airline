@@ -2,18 +2,24 @@ package bootstrap
 
 import (
 	"fmt"
-
 	"github.com/spf13/viper"
+	"os"
 )
 
 type Env struct {
-	DBRootName     string `mapstructure:"MYSQL_ROOT"`
-	DBRootPassword string `mapstructure:"MYSQL_ROOT_PASSWORD"`
-	DBUserName     string `mapstructure:"MYSQL_USER"`
-	DBUserPassword string `mapstructure:"MYSQL_PASSWORD"`
-	DBTableName    string `mapstructure:"MYSQL_DATABASE"`
-	DBHost         string `mapstructure:"DB_HOST"`
-	DBPort         string `mapstructure:"DB_PORT"`
+	DBRootName              string `mapstructure:"MYSQL_ROOT"`
+	DBRootPassword          string `mapstructure:"MYSQL_ROOT_PASSWORD"`
+	DBUserName              string `mapstructure:"MYSQL_USER"`
+	DBUserPassword          string `mapstructure:"MYSQL_PASSWORD"`
+	DBTableName             string `mapstructure:"MYSQL_DATABASE"`
+	DBHost                  string `mapstructure:"DB_HOST"`
+	DBPort                  string `mapstructure:"DB_PORT"`
+	ContextTimeout          int    `mapstructure:"CONTEXT_TIMEOUT"`
+	ServerAddress           string `mapstructure:"SERVER_ADDRESS"`
+	AccessTokenSecret       string `mapstructure:"ACCESS_TOKEN_SECRET"`
+	AccessTokenExpiryHours  int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOURS"`
+	RefreshTokenSecret      string `mapstructure:"REFRESH_TOKEN_SECRET"`
+	RefreshTokenExpiryHours int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOURS"`
 }
 
 func NewEnv() *Env {
@@ -23,11 +29,13 @@ func NewEnv() *Env {
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("Can't find the file .env : ", err)
+		os.Exit(1)
 	}
 
 	err = viper.Unmarshal(&env)
 	if err != nil {
 		fmt.Println("Environment can't be loaded: ", err)
+		os.Exit(1)
 	}
 
 	return &env

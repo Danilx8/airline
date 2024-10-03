@@ -30,9 +30,27 @@ func (u *userRepository) Create(user *domain.User) (int64, error) {
 func (u userRepository) Fetch(users *[]domain.User) error {
 	// я видел, что ты возращаешь по бачам, что хорошо, однако у нас будет мало записей,
 	// поэтому можно будет просто дергать всю таблицу, но можем обсудить
-	result := u.database.Find(&users)
+	result := u.database.Table("users").Joins("LEFT JOIN roles ON users.RoleID = roles.ID").Where("roles.Title <> ?", "Administrator").Find(&users)
 	if result.Error != nil {
 		return fmt.Errorf("failed to fetched users: %w", result.Error)
+	}
+
+	return nil
+}
+
+func (u userRepository) FetchAdmins(users *[]domain.User) error {
+	result := u.database.Table("users").Joins("LEFT JOIN roles ON users.RoleID = roles.ID").Where("roles.Title = ?", "Administrator").Find(&users)
+	if result.Error != nil {
+		return fmt.Errorf("failed to fetched users: %w", result.Error)
+	}
+
+	return nil
+}
+
+func (u userRepository) FetchByEmail(email string, user *domain.User) error {
+	result := u.database.Table("users").Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return fmt.Errorf("failed to fetched user: %w", result.Error)
 	}
 
 	return nil

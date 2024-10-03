@@ -10,8 +10,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
--- use `test`;
 --
 -- Table structure for table `countries`
 --
@@ -107,14 +105,69 @@ CREATE TABLE `users` (
   `LastName` varchar(50) COLLATE utf8_bin NOT NULL,
   `OfficeID` int(11) DEFAULT NULL,
   `Birthdate` date DEFAULT NULL,
-  `Active` tinyint(1) DEFAULT NULL,
+  `Active` int(2) DEFAULT NULL,
   PRIMARY KEY (`ID`),
+  FOREIGN KEY (`Active`) REFERENCES `user_status` (`ID`),
   KEY `FK_Users_Offices` (`OfficeID`),
   KEY `FK_Users_Roles` (`RoleID`),
   CONSTRAINT `FK_Users_Offices` FOREIGN KEY (`OfficeID`) REFERENCES `offices` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_Users_Roles` FOREIGN KEY (`RoleID`) REFERENCES `roles` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Create trigger for calc Age column
+--
+CREATE TRIGGER after_users_insert
+AFTER INSERT ON `users`
+FOR EACH ROW
+    INSERT INTO `admin_panel` (`UserID`, `Age`)
+    VALUES (NEW.ID, TIMESTAMPDIFF(YEAR, NEW.Birthdate, CURDATE()));
+
+--
+-- Table structure for table `user_status`
+-- 
+
+DROP TABLE IF EXISTS `user_status`;
+CREATE TABLE `user_status` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Title` varchar(250) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+ALTER TABLE `user_status` AUTO_INCREMENT=0;
+LOCK TABLES `user_status` WRITE;
+INSERT INTO `user_status` VALUES (1, 'Enable'),(0, 'Disable');
+UNLOCK TABLES;
+
+--
+-- table structure for table `admin_panel`
+-- 
+
+drop table if exists `admin_panel`;
+create table `admin_panel` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `UserID` int(11) NOT NULL,
+  `Age` int(3) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`)
+);
+
+--
+-- Table structure for table `user_panel`
+-- 
+
+DROP TABLE IF EXISTS `user_panel`;
+CREATE TABLE `user_panel` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `UserID` int(11) NOT NULL,
+  `Date` date NOT NULL,
+  `LoginTime` date NOT NULL,
+  `LogoutTime` date DEFAULT NULL,
+  `LogoutReason` text DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`)
+);
 
 --
 -- Dumping data for table `users`
@@ -135,6 +188,7 @@ INSERT INTO users (ID, RoleID, Email, Password, FirstName, LastName, OfficeID, B
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
