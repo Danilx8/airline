@@ -47,6 +47,15 @@ func (u userRepository) FetchAdmins(users *[]domain.User) error {
 	return nil
 }
 
+func (u userRepository) FetchByEmail(email string, user *domain.User) error {
+	result := u.database.Table("users").Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return fmt.Errorf("failed to fetched user: %w", result.Error)
+	}
+
+	return nil
+}
+
 func (u userRepository) Update(user *domain.User) error {
 	userOld := &domain.User{}
 	result := u.database.Where("ID = ?", user.ID).First(userOld)
