@@ -30,3 +30,4 @@
 ```
 swag init -g cmd/main.go -d app/ --pd true
 ```
+Далее переходим [сюда](http://localhost:8080/docs/index.html) и наслаждаемся
