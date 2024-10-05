@@ -3,9 +3,10 @@ package controller
 import (
 	"app/app/domain"
 	"app/app/usecase"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
@@ -17,6 +18,14 @@ const (
 	EMPLOYEES = false
 )
 
+// GetEmployeeUsers godoc
+// @Summary	List of employee users
+// @Description get employees
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200 {array} domain.User
+// @Router /users [get]
 func (userController *UserController) GetEmployeeUsers(c *gin.Context) {
 	users, err := userController.UserUsecase.FetchAll(c, EMPLOYEES)
 	if err != nil {
