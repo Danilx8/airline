@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"app/app/domain"
-	"github.com/gin-gonic/gin"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserUsecase struct {
@@ -35,12 +36,12 @@ func (userUsecase *UserUsecase) FetchAll(c *gin.Context, isAdmin bool) ([]domain
 	return users, nil
 }
 
-func (userUsecase *UserUsecase) CreateUser(c *gin.Context, user domain.User) (int64, error) {
-	userId, err := userUsecase.userRepository.Create(&user)
+func (userUsecase *UserUsecase) CreateUser(c *gin.Context, user domain.User) (*domain.User, error) {
+	userRes, err := userUsecase.userRepository.Create(&user)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return userId, nil
+	return userRes, nil
 }
 
 func (userUsecase *UserUsecase) UpdateUser(c *gin.Context, user domain.User) error {
@@ -51,8 +52,8 @@ func (userUsecase *UserUsecase) UpdateUser(c *gin.Context, user domain.User) err
 	return nil
 }
 
-func (userUsecase *UserUsecase) DeleteUser(c *gin.Context, userID int64) error {
-	err := userUsecase.userRepository.Delete(userID)
+func (userUsecase *UserUsecase) DeleteUser(c *gin.Context, id int) error {
+	err := userUsecase.userRepository.Delete(id)
 	if err != nil {
 		return err
 	}
