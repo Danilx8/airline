@@ -7,6 +7,23 @@ definitions:
       header:
         type: string
     type: object
+  domain.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  domain.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
   domain.User:
     properties:
       active:
@@ -51,6 +68,39 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: scheme of login
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+      summary: Login of user
+      tags:
+      - Login
   /users:
     get:
       consumes:
