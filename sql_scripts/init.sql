@@ -178,7 +178,7 @@ CREATE TABLE `user_panel` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 -- SET GLOBAL local_infile = 1;
-INSERT INTO users (ID, RoleID, Email, Password, FirstName, LastName, OfficeID, Birthdate, Active) VALUES
+INSERT INTO users (ID, RoleID, Email, Password, FirstName, LastName, OfficeID, Birthdate, Active, Banned, BanReason) VALUES
     (1, 1, 'j.doe@amonic.com', '123', 'John', 'Doe', 1, '1983-01-13', 1, 0, NULL),
     (2, 2, 'k.omar@amonic.com', '4258', 'Karim', 'Omar', 1, '1980-03-19', 1, 0, NULL),
     (3, 2, 'h.saeed@amonic.com', '2020', 'Hannan', 'Saeed', 3, '1989-12-20', 1, 0, NULL),
