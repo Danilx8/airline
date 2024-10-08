@@ -24,9 +24,18 @@ services:
       depends_on:
         - db
 
+    app:
+      build:
+          dockerfile: Dockerfile.app
+      depends_on:
+        - db
+      restart: always
+      ports:
+        - "${SERVER_ADDRESS}:8080"
+
     cron:
       build:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.cron
       depends_on:
         - db
 

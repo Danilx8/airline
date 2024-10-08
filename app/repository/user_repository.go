@@ -18,13 +18,13 @@ func NewUserRepository(db *gorm.DB) domain.UserRepository {
 	}
 }
 
-func (u *userRepository) Create(user *domain.User) (int64, error) {
+func (u *userRepository) Create(user *domain.User) (*domain.User, error) {
 	result := u.database.Create(&user)
 	if result.Error != nil {
-		return 0, result.Error
+		return nil, result.Error
 	}
 	//TODO: Подумать о смене сигнатуры, так как в юзер присваивается id по ссылке
-	return user.ID, result.Error
+	return user, result.Error
 }
 
 func (u userRepository) Fetch(users *[]domain.User) error {
@@ -81,8 +81,16 @@ func (u userRepository) Update(user *domain.User) error {
 
 	return nil
 }
-func (u userRepository) Delete(id int64) error {
+func (u userRepository) Delete(id int) error {
+	var count int64
 	var user domain.User
+
+	// TODO: move to admin panel repository
+	u.database.Table("admin_panel").Where("UserID = ?", id).Count(&count)
+	if count > 0 {
+		u.database.Table("admin_panel").Where("UserID = ?", id).Delete(&domain.AdminPanel{})
+	}
+
 	result := u.database.Where("ID = ?", id).First(&user)
 	if result.Error != nil {
 		return fmt.Errorf("failed to found user with id %d: %w", id, result.Error)

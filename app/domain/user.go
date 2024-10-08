@@ -23,11 +23,15 @@ type User struct {
 	//Role      Role   //`gorm:"column:"foreignKey:RoleID;references:ID"`
 }
 
+type UserId struct {
+	Id int `json:"id,omitempty"`
+}
+
 type UserRepository interface {
-	Create(user *User) (int64, error)
+	Create(user *User) (*User, error)
 	Fetch(users *[]User) error
 	FetchAdmins(users *[]User) error
 	FetchByEmail(email string, user *User) error
 	Update(user *User) error
-	Delete(id int64) error
+	Delete(id int) error
 }

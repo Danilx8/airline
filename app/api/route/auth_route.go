@@ -5,9 +5,10 @@ import (
 	"app/app/bootstrap"
 	"app/app/repository"
 	"app/app/usecase"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"time"
 )
 
 func NewAuthRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, group *gin.RouterGroup) {

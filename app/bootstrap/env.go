@@ -2,8 +2,9 @@ package bootstrap
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 type Env struct {
@@ -41,10 +42,15 @@ func NewEnv() *Env {
 	return &env
 }
 func (e Env) GetCreds() string {
+	//creds := fmt.Sprintf(
+	//	"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	//	e.DBUserName, e.DBUserPassword,
+	//	e.DBHost, e.DBPort, e.DBTableName,
+	//)
 	creds := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"%s:%s@tcp(db)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		e.DBUserName, e.DBUserPassword,
-		e.DBHost, e.DBPort, e.DBTableName,
+		e.DBTableName,
 	)
 	return creds
 }
