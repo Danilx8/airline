@@ -278,6 +278,9 @@ const docTemplate = `{
                 },
                 "refreshToken": {
                     "type": "string"
+                },
+                "roleId": {
+                    "type": "integer"
                 }
             }
         },
