@@ -61,6 +61,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 	response := domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		RoleId:       user.RoleID,
 	}
 
 	c.JSON(http.StatusOK, response)

@@ -10,6 +10,7 @@ type Login struct {
 type LoginResponse struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
+	RoleId       int64  `json:"roleId"`
 }
 
 type LoginUsecase interface {
