@@ -272,6 +272,9 @@
                 },
                 "refreshToken": {
                     "type": "string"
+                },
+                "roleId": {
+                    "type": "integer"
                 }
             }
         },

@@ -23,6 +23,8 @@ definitions:
         type: string
       refreshToken:
         type: string
+      roleId:
+        type: integer
     type: object
   domain.User:
     properties:
