@@ -1,18 +1,19 @@
 package middlewares
 
 import (
+	"app/app/bootstrap"
 	"app/app/usecase"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
 
 type AuthMiddleware struct {
 	AuthUsecase usecase.AuthUsecase
+	Env         bootstrap.Env
 }
 
 func (ca *AuthMiddleware) CheckAuth(c *gin.Context) {
@@ -34,12 +35,12 @@ func (ca *AuthMiddleware) CheckAuth(c *gin.Context) {
 	tokenString := authToken[1]
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("SECRET")), nil
+		return []byte(ca.Env.AccessTokenSecret), nil
 	})
-	if err != nil || !token.Valid {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}

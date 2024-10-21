@@ -19,6 +19,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engi
 	}
 	authMiddleware := middlewares.AuthMiddleware{
 		AuthUsecase: usecase.NewAuthUsecase(userRepository, timeout),
+		Env:         *env,
 	}
 
 	publicRouter := gin.Group("")
