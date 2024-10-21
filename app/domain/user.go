@@ -18,8 +18,8 @@ type User struct {
 	BirthDate string `gorm:"column:BirthDate"`
 	Active    bool   `gorm:"column:Active"`
 	OfficeID  int64  `gorm:"column:OfficeID"`
-	//Office    Office //`gorm:"column:OfficeID;foreignKey:ID"`
-	RoleID int64 `gorm:"column:RoleID"`
+	Office    Office `gorm:"column:OfficeID;foreignKey:ID"`
+	RoleID    int64  `gorm:"column:RoleID"`
 	//Role      Role   //`gorm:"column:"foreignKey:RoleID;references:ID"`
 }
 
@@ -34,4 +34,5 @@ type UserRepository interface {
 	FetchByEmail(email string, user *User) error
 	Update(user *User) error
 	Delete(id int) error
+	FetchUserPanel(id int) (*Session, error)
 }
