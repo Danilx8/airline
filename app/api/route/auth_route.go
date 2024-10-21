@@ -15,6 +15,7 @@ func NewAuthRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, group
 	userRepository := repository.NewUserRepository(db)
 	authController := controller.AuthController{
 		AuthUsecase: usecase.NewAuthUsecase(userRepository, timeout),
+		Env:         *env,
 	}
 	group.POST("login", authController.Login)
 }

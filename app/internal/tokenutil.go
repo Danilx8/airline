@@ -12,7 +12,7 @@ func GenerateAccessToken(user *domain.User, secret string, expiry int) (accessTo
 		Email: user.Email,
 		ID:    strconv.FormatInt(user.ID, 10),
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "AMONIC Airlines",
+			Issuer:    "https://localhost:8080/",
 			Subject:   "Authentication",
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(expiry))),
 			NotBefore: jwt.NewNumericDate(time.Now()),
