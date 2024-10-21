@@ -124,3 +124,31 @@ func (userController *UserController) DeleteUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, userId)
 }
+
+// GetUsersSessions godoc
+// @Summary	Retrieve user sessions by their id
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param        data    body   domain.UserId true  "scheme of user"
+// @Success 200 {object} domain.Session
+// @Failure 400 {object} domain.ErrorMessage
+// @Failure 500 {object} domain.ErrorMessage
+// @Router /users/delete [delete]
+func (userController *UserController) GetUsersSessions(c *gin.Context) {
+	user, exists := c.Get("currentUser")
+
+	if !exists {
+		log.Print("Unauthorized user attempted to get user session")
+		c.JSON(http.StatusBadRequest, domain.ErrorMessage{Header: "UserController, GetUserSessions, fail binding id", Description: "User token wasn't found"})
+		return
+	}
+
+	session, err := userController.UserUsecase.UserPanel(c, int(user.(domain.User).ID))
+	if err != nil {
+		log.Print(err.Error())
+		c.JSON(http.StatusInternalServerError, domain.ErrorMessage{Header: "UserController, GetUserSessions, fail getting user sessions", Description: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, session)
+}

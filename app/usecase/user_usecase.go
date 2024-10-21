@@ -59,3 +59,11 @@ func (userUsecase *UserUsecase) DeleteUser(c *gin.Context, id int) error {
 	}
 	return nil
 }
+
+func (userUsecase *UserUsecase) UserPanel(c *gin.Context, id int) (*domain.Session, error) {
+	session, err := userUsecase.userRepository.FetchUserPanel(id)
+	if err != nil {
+		return nil, err
+	}
+	return session, nil
+}

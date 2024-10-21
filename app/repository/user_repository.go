@@ -102,3 +102,13 @@ func (u userRepository) Delete(id int) error {
 
 	return nil
 }
+
+func (u userRepository) FetchUserPanel(id int) (*domain.Session, error) {
+	session := &domain.Session{}
+	result := u.database.Table("admin_panel").Where("UserID = ?", session.UserId).First(&session)
+	if result.Error != nil {
+		return nil, fmt.Errorf("failed to fetch session of user with id %d: %w", session.UserId, result.Error)
+	}
+
+	return session, nil
+}
