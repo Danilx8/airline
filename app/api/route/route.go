@@ -14,11 +14,12 @@ import (
 
 func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engine) {
 	userRepository := repository.NewUserRepository(db)
+	sessionRepository := repository.NewSessionRepository(db)
 	userController := controller.UserController{
 		UserUsecase: usecase.NewUserUsecase(userRepository, timeout),
 	}
 	authMiddleware := middlewares.AuthMiddleware{
-		AuthUsecase: usecase.NewAuthUsecase(userRepository, timeout),
+		AuthUsecase: usecase.NewAuthUsecase(userRepository, sessionRepository, timeout),
 		Env:         *env,
 	}
 
