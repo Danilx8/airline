@@ -32,6 +32,7 @@ type UserRepository interface {
 	Fetch(users *[]User) error
 	FetchAdmins(users *[]User) error
 	FetchByEmail(email string, user *User) error
+	FetchById(id int, user *User) error
 	Update(user *User) error
 	Delete(id int) error
 	FetchUserPanel(id int) (*Session, error)
