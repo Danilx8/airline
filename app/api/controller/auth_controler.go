@@ -58,6 +58,12 @@ func (ac *AuthController) Login(c *gin.Context) {
 		return
 	}
 
+	err = ac.AuthUsecase.StartLoginSession(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorMessage{Header: "AuthController, Login, fail to start login session", Description: err.Error()})
+		return
+	}
+
 	response := domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,

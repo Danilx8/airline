@@ -67,3 +67,19 @@ func (userUsecase *UserUsecase) UserPanel(c *gin.Context, id int) (*domain.Sessi
 	}
 	return session, nil
 }
+
+func (userUsecase *UserUsecase) BanUser(c *gin.Context, id int) error {
+	var user domain.User
+	err := userUsecase.userRepository.FetchById(id, &user)
+	if err != nil {
+		return err
+	}
+
+	user.Active = false
+	err = userUsecase.userRepository.Update(&user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
