@@ -27,7 +27,7 @@ func (s sessionRepository) Start(session *domain.Session) error {
 
 func (s sessionRepository) Update(session *domain.Session) error {
 	oldSession := &domain.Session{}
-	result := s.database.Where("user_id = ?", session.UserId).Last(&oldSession)
+	result := s.database.Where("userId = ?", session.UserId).Last(&oldSession)
 
 	if result.Error != nil {
 		return fmt.Errorf("could not set logout for user with id %d: %s", session.UserId, result.Error)
