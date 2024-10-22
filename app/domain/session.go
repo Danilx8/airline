@@ -16,3 +16,7 @@ type SessionRepository interface {
 	Start(session *Session) error
 	Update(session *Session) error
 }
+
+func (Session) TableName() string {
+	return "user_panel"
+}
