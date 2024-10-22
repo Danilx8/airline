@@ -130,7 +130,7 @@ func (userController *UserController) DeleteUser(c *gin.Context) {
 // @Tags User
 // @Accept json
 // @Produce json
-// @Success 200 {object} domain.Session
+// @Success 200 {object} domain.UserPanel
 // @Failure 400 {object} domain.ErrorMessage
 // @Failure 500 {object} domain.ErrorMessage
 // @Router /user/sessions [get]

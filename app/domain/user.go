@@ -35,5 +35,5 @@ type UserRepository interface {
 	FetchById(id int, user *User) error
 	Update(user *User) error
 	Delete(id int) error
-	FetchUserPanel(id int) (*Session, error)
+	FetchUserPanel(id int) (*UserPanel, error)
 }
