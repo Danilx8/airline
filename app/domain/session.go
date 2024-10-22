@@ -3,7 +3,7 @@ package domain
 import "time"
 
 // References user_panel
-type UserPanel struct {
+type Session struct {
 	Id           int       `gorm:"id"`
 	UserId       int       `gorm:"user_id"`
 	Date         string    `gorm:"date"`
@@ -13,6 +13,10 @@ type UserPanel struct {
 }
 
 type SessionRepository interface {
-	Start(session *UserPanel) error
-	Update(session *UserPanel) error
+	Start(session *Session) error
+	Update(session *Session) error
+}
+
+func (Session) TableName() string {
+	return "user_panel"
 }

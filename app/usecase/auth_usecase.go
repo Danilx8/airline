@@ -38,7 +38,7 @@ func (a AuthUsecase) GenerateRefreshToken(user *domain.User, secret string, expi
 }
 
 func (a AuthUsecase) StartLoginSession(user *domain.User) error {
-	session := domain.UserPanel{
+	session := domain.Session{
 		UserId:    int(user.ID),
 		Date:      time.DateTime,
 		LoginTime: time.Now(),

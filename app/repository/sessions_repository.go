@@ -17,7 +17,7 @@ func NewSessionRepository(db *gorm.DB) domain.SessionRepository {
 	}
 }
 
-func (s sessionRepository) Start(session *domain.UserPanel) error {
+func (s sessionRepository) Start(session *domain.Session) error {
 	result := s.database.Create(&session)
 	if result.Error != nil {
 		return result.Error
@@ -25,8 +25,8 @@ func (s sessionRepository) Start(session *domain.UserPanel) error {
 	return result.Error
 }
 
-func (s sessionRepository) Update(session *domain.UserPanel) error {
-	oldSession := &domain.UserPanel{}
+func (s sessionRepository) Update(session *domain.Session) error {
+	oldSession := &domain.Session{}
 	result := s.database.Where("user_id = ?", session.UserId).Last(&oldSession)
 
 	if result.Error != nil {
