@@ -18,7 +18,7 @@ type User struct {
 	BirthDate string `gorm:"column:BirthDate"`
 	Active    bool   `gorm:"column:Active"`
 	OfficeID  int64  `gorm:"column:OfficeID"`
-	Office    Office `gorm:"column:OfficeID;foreignKey:ID"`
+	Office    Office `gorm:"column:OfficeID;foreignKey:OfficeID"`
 	RoleID    int64  `gorm:"column:RoleID"`
 	//Role      Role   //`gorm:"column:"foreignKey:RoleID;references:ID"`
 }

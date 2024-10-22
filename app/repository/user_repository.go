@@ -30,7 +30,7 @@ func (u *userRepository) Create(user *domain.User) (*domain.User, error) {
 func (u userRepository) Fetch(users *[]domain.User) error {
 	// я видел, что ты возращаешь по бачам, что хорошо, однако у нас будет мало записей,
 	// поэтому можно будет просто дергать всю таблицу, но можем обсудить
-	result := u.database.Table("users").Joins("LEFT JOIN roles ON users.RoleID = roles.ID").Where("roles.Title <> ?", "Administrator").Find(&users)
+	result := u.database.Table("users").Preload("Office").Joins("LEFT JOIN roles ON users.RoleID = roles.ID").Where("roles.Title <> ?", "Administrator").Find(&users)
 	if result.Error != nil {
 		return fmt.Errorf("failed to fetched users: %w", result.Error)
 	}
