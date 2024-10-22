@@ -4,12 +4,12 @@ import "time"
 
 // References user_panel
 type Session struct {
-	Id           int       `gorm:"ID"`
-	UserId       int       `gorm:"UserID"`
-	Date         string    `gorm:"Date"`
-	LoginTime    time.Time `gorm:"LoginTime"`
-	LogoutTime   time.Time `gorm:"LogoutTime"`
-	LogoutReason string    `gorm:"LogoutReason"`
+	Id           int       `gorm:"column:ID"`
+	UserId       int       `gorm:"column:UserID"`
+	Date         string    `gorm:"column:Date"`
+	LoginTime    time.Time `gorm:"column:LoginTime"`
+	LogoutTime   time.Time `gorm:"column:LogoutTime"`
+	LogoutReason string    `gorm:"column:LogoutReason"`
 }
 
 type SessionRepository interface {
