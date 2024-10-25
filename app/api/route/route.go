@@ -29,5 +29,5 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engi
 
 	privateRouter := gin.Group("")
 	privateRouter.Use(authMiddleware.CheckAuth)
-	NewUserRouter(env, userController, publicRouter)
+	NewUserRouter(env, userController, privateRouter)
 }
