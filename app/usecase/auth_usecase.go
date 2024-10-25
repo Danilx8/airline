@@ -40,7 +40,7 @@ func (a AuthUsecase) GenerateRefreshToken(user *domain.User, secret string, expi
 func (a AuthUsecase) StartLoginSession(user *domain.User) error {
 	session := domain.Session{
 		UserId:       int(user.ID),
-		Date:         time.DateTime,
+		Date:         time.Now().Format("2006-01-02"),
 		LoginTime:    time.Now(),
 		LogoutTime:   time.Now().Add(time.Hour * 12),
 		LogoutReason: "",

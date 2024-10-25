@@ -4,6 +4,7 @@ import (
 	"app/app/bootstrap"
 	"app/app/domain"
 	"app/app/usecase"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -40,8 +41,8 @@ func (ac *AuthController) Login(c *gin.Context) {
 	}
 
 	//TODO: начать шифровать пароли в дб (нет в ТЗ)
-	//if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)) != nil {
-	if user.Password != request.Password {
+	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)) != nil {
+		//if user.Password != request.Password {
 		c.JSON(http.StatusBadRequest, domain.ErrorMessage{Header: "AuthController, Login", Description: "wrong password"})
 		return
 	}
