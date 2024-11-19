@@ -191,6 +191,52 @@ INSERT INTO users (ID, RoleID, Email, Password, FirstName, LastName, OfficeID, B
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+DROP TABLE IF EXISTS Airports;
+CREATE TABLE Airports (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    CountryID INT NOT NULL, 
+    IATACode CHAR(3) NOT NULL UNIQUE, 
+    Name VARCHAR(255) NOT NULL, 
+    FOREIGN KEY (CountryID) REFERENCES Countries(ID) 
+);
+
+DROP TABLE IF EXISTS Aircrafts;
+CREATE TABLE Aircrafts (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(255) NOT NULL UNIQUE,
+    MakeModel VARCHAR(255), 
+    TotalSeats INT NOT NULL CHECK (TotalSeats > 0), 
+    EconomySeats INT NOT NULL CHECK (EconomySeats >= 0), 
+    BusinessSeats INT NOT NULL CHECK (BusinessSeats >= 0), 
+    CHECK (EconomySeats + BusinessSeats <= TotalSeats) 
+);
+
+DROP TABLE IF EXISTS Routes;
+CREATE TABLE Routes (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    DepartureAirportID INT NOT NULL, 
+    ArrivalAirportID INT NOT NULL,
+    Distance INT NOT NULL CHECK (Distance > 0), 
+    FlightTime TIME NOT NULL, 
+    FOREIGN KEY (DepartureAirportID) REFERENCES Airports(ID), 
+    FOREIGN KEY (ArrivalAirportID) REFERENCES Airports(ID), 
+    UNIQUE (DepartureAirportID, ArrivalAirportID), 
+    CHECK (DepartureAirportID <> ArrivalAirportID) 
+);
+
+DROP TABLE IF EXISTS Schedules;
+CREATE TABLE Schedules (
+    ID INT PRIMARY KEY AUTO_INCREMENT, 
+    Date DATE NOT NULL, 
+    Time TIME NOT NULL, 
+    AircraftID INT NOT NULL, 
+    RouteID INT NOT NULL, 
+    FlightNumber VARCHAR(50) NOT NULL UNIQUE, 
+    EconomyPrice DECIMAL(10, 2) NOT NULL CHECK (EconomyPrice >= 0), 
+    Confirmed BOOLEAN NOT NULL DEFAULT FALSE, 
+    FOREIGN KEY (AircraftID) REFERENCES Aircrafts(ID), 
+    FOREIGN KEY (RouteID) REFERENCES Routes(ID) 
+);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
