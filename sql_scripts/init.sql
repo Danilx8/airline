@@ -186,11 +186,57 @@ INSERT INTO users (ID, RoleID, Email, Password, FirstName, LastName, OfficeID, B
     (5, 2, 'k.anderson@amonic.com', '4570', 'Katrin', 'Anderson', 5, '1992-11-10', 1, 0, NULL),
     (6, 2, 'h.wyrick@amonic.com', '1199', 'Hava', 'Wyrick', 1, '1988-08-08', 1, 0, NULL),
     (7, 2, 'marie.horn@amonic.com', '55555', 'Marie', 'Horn', 4, '1981-04-06', 1, 0, NULL),
-    (8, 2, 'm.osteen@amonic.com', '9800', 'Milagros', 'Osteen', 1, '1991-02-03', 0, NULL);
+    (8, 2, 'm.osteen@amonic.com', '9800', 'Milagros', 'Osteen', 1, '1991-02-03',1, 0, NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+DROP TABLE IF EXISTS Airports;
+CREATE TABLE Airports (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    CountryID INT NOT NULL, 
+    IATACode CHAR(3) NOT NULL UNIQUE, 
+    Name VARCHAR(255) NOT NULL, 
+    FOREIGN KEY (CountryID) REFERENCES Countries(ID) 
+);
+
+DROP TABLE IF EXISTS Aircrafts;
+CREATE TABLE Aircrafts (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(255) NOT NULL UNIQUE,
+    MakeModel VARCHAR(255), 
+    TotalSeats INT NOT NULL CHECK (TotalSeats > 0), 
+    EconomySeats INT NOT NULL CHECK (EconomySeats >= 0), 
+    BusinessSeats INT NOT NULL CHECK (BusinessSeats >= 0), 
+    CHECK (EconomySeats + BusinessSeats <= TotalSeats) 
+);
+
+DROP TABLE IF EXISTS Routes;
+CREATE TABLE Routes (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    DepartureAirportID INT NOT NULL, 
+    ArrivalAirportID INT NOT NULL,
+    Distance INT NOT NULL CHECK (Distance > 0), 
+    FlightTime TIME NOT NULL, 
+    FOREIGN KEY (DepartureAirportID) REFERENCES Airports(ID), 
+    FOREIGN KEY (ArrivalAirportID) REFERENCES Airports(ID), 
+    UNIQUE (DepartureAirportID, ArrivalAirportID), 
+    CHECK (DepartureAirportID <> ArrivalAirportID) 
+);
+
+DROP TABLE IF EXISTS Schedules;
+CREATE TABLE Schedules (
+    ID INT PRIMARY KEY AUTO_INCREMENT, 
+    Date DATE NOT NULL, 
+    Time TIME NOT NULL, 
+    AircraftID INT NOT NULL, 
+    RouteID INT NOT NULL, 
+    FlightNumber VARCHAR(50) NOT NULL UNIQUE, 
+    EconomyPrice DECIMAL(10, 2) NOT NULL CHECK (EconomyPrice >= 0), 
+    Confirmed BOOLEAN NOT NULL DEFAULT FALSE, 
+    FOREIGN KEY (AircraftID) REFERENCES Aircrafts(ID), 
+    FOREIGN KEY (RouteID) REFERENCES Routes(ID) 
+);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
