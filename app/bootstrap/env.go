@@ -43,7 +43,7 @@ func NewEnv() *Env {
 }
 func (e Env) GetCreds() string {
 	creds := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
 		e.DBUserName, e.DBUserPassword,
 		e.DBHost, e.DBPort, e.DBTableName,
 	)
