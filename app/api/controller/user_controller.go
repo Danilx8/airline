@@ -64,7 +64,7 @@ func (userController *UserController) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, domain.ErrorMessage{Header: "UserController, CreateUser, fail creating user", Description: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, userRes)
+	c.JSON(http.StatusCreated, userRes)
 }
 
 // UpdateUser godoc

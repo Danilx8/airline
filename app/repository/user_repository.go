@@ -23,7 +23,6 @@ func (u *userRepository) Create(user *domain.User) (*domain.User, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	//TODO: Подумать о смене сигнатуры, так как в юзер присваивается id по ссылке
 	return user, result.Error
 }
 

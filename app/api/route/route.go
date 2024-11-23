@@ -15,6 +15,8 @@ import (
 func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engine) {
 	userRepository := repository.NewUserRepository(db)
 	sessionRepository := repository.NewSessionRepository(db)
+	routeRepository := repository.NewRouteRepository(db)
+
 	userController := controller.UserController{
 		UserUsecase: usecase.NewUserUsecase(userRepository, timeout),
 	}
@@ -22,9 +24,13 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engi
 		AuthUsecase: usecase.NewAuthUsecase(userRepository, sessionRepository, timeout),
 		Env:         *env,
 	}
+	routeController := controller.RouteController{
+		RouteUsecase: usecase.NewRouteUsecase(routeRepository),
+	}
 
 	publicRouter := gin.Group("")
 	NewAuthRouter(env, timeout, db, publicRouter)
+	NewRoutesRouter(env, routeController, publicRouter)
 	SwaggerRouter(env, publicRouter)
 
 	privateRouter := gin.Group("")
