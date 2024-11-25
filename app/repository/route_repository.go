@@ -2,7 +2,6 @@ package repository
 
 import (
 	"app/app/domain"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -17,39 +16,55 @@ func NewRouteRepository(db *gorm.DB) domain.RouteRepository {
 	}
 }
 
-func (r routeRepository) GetByDepartureID(depId int) (*domain.Route, error) {
-	var route domain.Route
+func (r routeRepository) GetByDepartureID(route *domain.Route, depId int) error {
 	if err := r.db.Table("Routes").
 		Where("DepartureAirportID = ?", depId).
-		Find(&route).Error; err != nil {
-		fmt.Println(err)
-		return nil, err
+		Preload("DepartureAirport").
+		Preload("ArrivalAirport").
+		Preload("DepartureAirport.Country").
+		Preload("ArrivalAirport.Country").
+		First(route).Error; err != nil {
+		return err
 	}
-	fmt.Println(route)
-
-	return &route, nil
+	return nil
 }
 
-func (r routeRepository) GetByArrivalID(arrId int) (*domain.Route, error) {
-	var route domain.Route
+func (r routeRepository) GetByArrivalID(route *domain.Route, arrId int) error {
 	if err := r.db.Table("Routes").
 		Where("ArrivalAirportID = ?", arrId).
-		Find(&route).Error; err != nil {
-		fmt.Println(err)
-		return nil, err
+		Preload("DepartureAirport").
+		Preload("ArrivalAirport").
+		Preload("DepartureAirport.Country").
+		Preload("ArrivalAirport.Country").
+		First(route).Error; err != nil {
+		return err
 	}
 
-	return &route, nil
+	return nil
 }
 
-func (r routeRepository) GetByDepartureIDAndArrivalID(depId, arrId int) (*domain.Route, error) {
-	var route domain.Route
+func (r routeRepository) GetByDepartureIDAndArrivalID(route *domain.Route, depId, arrId int) error {
 	if err := r.db.Table("Routes").
 		Where("ArrivalAirportID = ?", arrId).
 		Where("DepartureAirportID = ?", depId).
-		Find(&route).Error; err != nil {
-		fmt.Println(err)
-		return nil, err
+		Preload("DepartureAirport").
+		Preload("ArrivalAirport").
+		Preload("DepartureAirport.Country").
+		Preload("ArrivalAirport.Country").
+		First(route).Error; err != nil {
+		return err
 	}
-	return &route, nil
+	return nil
+}
+
+func (r routeRepository) GetAllRoutes(routes *[]domain.Route) error {
+	if err := r.db.Table("Routes").
+		Preload("DepartureAirport").
+		Preload("ArrivalAirport").
+		Preload("DepartureAirport.Country").
+		Preload("ArrivalAirport.Country").
+		Find(&routes).Error; err != nil {
+		return err
+	}
+	return nil
 }

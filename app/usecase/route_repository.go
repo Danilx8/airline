@@ -6,6 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var orderMapper map[string]string = map[string]string{
+	"date": "FlightTime",
+}
+
 type RouteUsecase struct {
 	routeRepository domain.RouteRepository
 }
@@ -16,25 +20,35 @@ func NewRouteUsecase(routeRepo domain.RouteRepository) RouteUsecase {
 	}
 }
 
-func (r *RouteUsecase) GetByDepatureIDAndArrivalID(c *gin.Context, depId, arrId int) (*domain.Route, error) {
-	var route *domain.Route
+func (r *RouteUsecase) GetByDepatureIDAndArrivalID(c *gin.Context, depId, arrId int, sortBy string) (*domain.Route, error) {
+	var route domain.Route
 	var err error
 
 	if depId == 0 && arrId != 0 {
-		route, err = r.routeRepository.GetByArrivalID(arrId)
+		err = r.routeRepository.GetByArrivalID(&route, arrId)
 		if err != nil {
 			return nil, err
 		}
 	} else if depId != 0 && arrId == 0 {
-		route, err = r.routeRepository.GetByDepartureID(depId)
+		err = r.routeRepository.GetByDepartureID(&route, depId)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		route, err = r.routeRepository.GetByDepartureIDAndArrivalID(depId, arrId)
+		err = r.routeRepository.GetByDepartureIDAndArrivalID(&route, depId, arrId)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return route, nil
+	return &route, nil
+}
+
+func (r *RouteUsecase) GetAllRoutes(c *gin.Context) (*[]domain.Route, error) {
+	var routes []domain.Route
+
+	if err := r.routeRepository.GetAllRoutes(&routes); err != nil {
+		return nil, err
+	}
+
+	return &routes, nil
 }
