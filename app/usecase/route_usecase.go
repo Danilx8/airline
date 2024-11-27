@@ -6,10 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var orderMapper map[string]string = map[string]string{
-	"date": "FlightTime",
-}
-
 type RouteUsecase struct {
 	routeRepository domain.RouteRepository
 }
@@ -20,7 +16,7 @@ func NewRouteUsecase(routeRepo domain.RouteRepository) RouteUsecase {
 	}
 }
 
-func (r *RouteUsecase) GetByDepatureIDAndArrivalID(c *gin.Context, depId, arrId int, sortBy string) (*domain.Route, error) {
+func (r *RouteUsecase) GetByDepatureIDAndArrivalID(c *gin.Context, depId, arrId int) (*domain.Route, error) {
 	var route domain.Route
 	var err error
 
@@ -41,14 +37,4 @@ func (r *RouteUsecase) GetByDepatureIDAndArrivalID(c *gin.Context, depId, arrId 
 		}
 	}
 	return &route, nil
-}
-
-func (r *RouteUsecase) GetAllRoutes(c *gin.Context) (*[]domain.Route, error) {
-	var routes []domain.Route
-
-	if err := r.routeRepository.GetAllRoutes(&routes); err != nil {
-		return nil, err
-	}
-
-	return &routes, nil
 }

@@ -8,3 +8,7 @@ type Aircrafts struct {
 	EconomySeats  int    `gorm:"column:EconomySeats"`
 	BusinessSeats int    `gorm:"column:BusinessSeats"`
 }
+
+func (Aircrafts) TableName() string {
+	return "Aircrafts"
+}

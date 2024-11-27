@@ -15,14 +15,9 @@ type RouteController struct {
 }
 
 func (r *RouteController) GetFlight(c *gin.Context) {
-	sortBy := "date"
 	queryParams := c.Request.URL.Query()
 	departure, _ := strconv.Atoi(queryParams.Get("departure"))
 	arrival, _ := strconv.Atoi(queryParams.Get("arrival"))
-
-	if checkSortBy := queryParams.Get("sortBy"); checkSortBy != "" {
-		sortBy = checkSortBy
-	}
 
 	if departure == 0 && arrival == 0 {
 		c.JSON(http.StatusBadRequest, domain.ErrorMessage{
@@ -32,7 +27,7 @@ func (r *RouteController) GetFlight(c *gin.Context) {
 		return
 	}
 
-	route, err := r.RouteUsecase.GetByDepatureIDAndArrivalID(c, departure, arrival, sortBy)
+	route, err := r.RouteUsecase.GetByDepatureIDAndArrivalID(c, departure, arrival)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorMessage{
 			Header:      "Get error from RouteUsecase",
@@ -48,17 +43,4 @@ func (r *RouteController) GetFlight(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, route)
-}
-
-func (r *RouteController) GetAllRoutes(c *gin.Context) {
-	routes, err := r.RouteUsecase.GetAllRoutes(c)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorMessage{
-			Header:      "Get error from RouteUsecase",
-			Description: err.Error(),
-		})
-		return
-	}
-	fmt.Println("asdasd")
-	c.JSON(http.StatusOK, routes)
 }

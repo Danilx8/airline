@@ -10,6 +10,10 @@ type Route struct {
 	FlightTime         string   `gorm:"column:FlightTime"`
 }
 
+func (Route) TableName() string {
+	return "Routes"
+}
+
 type RouteRepository interface {
 	GetByDepartureID(route *Route, depId int) error
 	GetByArrivalID(route *Route, arrId int) error
