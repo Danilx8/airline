@@ -18,11 +18,11 @@ type ScheduleController struct {
 // @Tags Schedule
 // @Accept json
 // @Produce json
-// @Param        order    query     string true  "order of routes [date, ticketPrice, ticketStatus]"
-// @Param        from    query     string true  "from of routes"
-// @Param        to    query     string true  "to of routes"
-// @Param        outbound    query     string true  "outbound of routes [1970-10-24]"
-// @Param        flightNumber    query     string true  "flight number of routes [000]"
+// @Param        order    query     string false  "order of routes [date, ticketPrice, ticketStatus]"
+// @Param        from    query     string false  "from of routes"
+// @Param        to    query     string false  "to of routes"
+// @Param        outbound    query     string false  "outbound of routes [1970-10-24]"
+// @Param        flightNumber    query     string false  "flight number of routes [000]"
 // @Success 200 {array} domain.Schedules
 // @Failure 500 {object} domain.ErrorMessage
 // @Router /schedules [get]

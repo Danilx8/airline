@@ -87,36 +87,31 @@
                         "type": "string",
                         "description": "order of routes [date, ticketPrice, ticketStatus]",
                         "name": "order",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "from of routes",
                         "name": "from",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "to of routes",
                         "name": "to",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "outbound of routes [1970-10-24]",
                         "name": "outbound",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "flight number of routes [000]",
                         "name": "flightNumber",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {

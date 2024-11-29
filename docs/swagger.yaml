@@ -229,27 +229,22 @@ paths:
       - description: order of routes [date, ticketPrice, ticketStatus]
         in: query
         name: order
-        required: true
         type: string
       - description: from of routes
         in: query
         name: from
-        required: true
         type: string
       - description: to of routes
         in: query
         name: to
-        required: true
         type: string
       - description: outbound of routes [1970-10-24]
         in: query
         name: outbound
-        required: true
         type: string
       - description: flight number of routes [000]
         in: query
         name: flightNumber
-        required: true
         type: string
       produces:
       - application/json
