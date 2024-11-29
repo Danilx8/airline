@@ -1,11 +1,55 @@
 basePath: /
 definitions:
+  domain.Aircrafts:
+    properties:
+      businessSeats:
+        type: integer
+      economySeats:
+        type: integer
+      id:
+        type: integer
+      makeModel:
+        type: string
+      name:
+        type: string
+      totalSeats:
+        type: integer
+    type: object
+  domain.Airports:
+    properties:
+      country:
+        $ref: '#/definitions/domain.Countries'
+      countryID:
+        type: integer
+      iatacode:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  domain.Countries:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   domain.ErrorMessage:
     properties:
       description:
         type: string
       header:
         type: string
+    type: object
+  domain.FormResponse:
+    properties:
+      duplicateRecords:
+        type: integer
+      recordWithMissingFields:
+        type: integer
+      successfulChanges:
+        type: integer
     type: object
   domain.Login:
     properties:
@@ -26,6 +70,78 @@ definitions:
       roleId:
         type: integer
     type: object
+  domain.Office:
+    properties:
+      contact:
+        type: string
+      countryID:
+        type: integer
+      id:
+        type: integer
+      phone:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Route:
+    properties:
+      arrivalAirport:
+        $ref: '#/definitions/domain.Airports'
+      arrivalAirportID:
+        type: integer
+      departureAirport:
+        $ref: '#/definitions/domain.Airports'
+      departureAirportID:
+        type: integer
+      distance:
+        type: number
+      flightTime:
+        type: string
+      id:
+        type: integer
+    type: object
+  domain.Schedules:
+    properties:
+      BussinesPrice:
+        type: number
+      FirstClassPrice:
+        type: number
+      aircraft:
+        $ref: '#/definitions/domain.Aircrafts'
+      aircraftID:
+        type: integer
+      confirmed:
+        type: integer
+      date:
+        type: string
+      economyPrice:
+        type: number
+      flightNumber:
+        type: string
+      id:
+        type: integer
+      route:
+        $ref: '#/definitions/domain.Route'
+      routeID:
+        type: integer
+      time:
+        type: string
+    type: object
+  domain.Session:
+    properties:
+      date:
+        type: string
+      id:
+        type: integer
+      loginTime:
+        type: string
+      logoutReason:
+        type: string
+      logoutTime:
+        type: string
+      userId:
+        type: integer
+    type: object
   domain.User:
     properties:
       active:
@@ -40,12 +156,13 @@ definitions:
         type: integer
       lastName:
         type: string
+      office:
+        $ref: '#/definitions/domain.Office'
       officeID:
         type: integer
       password:
         type: string
       roleID:
-        description: Office    Office //`gorm:"column:OfficeID;foreignKey:ID"`
         type: integer
     type: object
   domain.UserId:
@@ -103,6 +220,126 @@ paths:
       summary: Login of user
       tags:
       - Login
+  /schedules:
+    get:
+      consumes:
+      - application/json
+      description: get schedule
+      parameters:
+      - description: order of routes [date, ticketPrice, ticketStatus]
+        in: query
+        name: order
+        required: true
+        type: string
+      - description: from of routes
+        in: query
+        name: from
+        required: true
+        type: string
+      - description: to of routes
+        in: query
+        name: to
+        required: true
+        type: string
+      - description: outbound of routes [1970-10-24]
+        in: query
+        name: outbound
+        required: true
+        type: string
+      - description: flight number of routes [000]
+        in: query
+        name: flightNumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Schedules'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+      summary: List of schedule
+      tags:
+      - Schedule
+  /schedules/file:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Load file with schedule
+      parameters:
+      - description: account image
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.FormResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+      summary: Load file
+      tags:
+      - Schedule
+  /schedules/flight:
+    put:
+      consumes:
+      - application/json
+      description: update flight
+      parameters:
+      - description: scheme of schedules
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Schedules'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Schedules'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+      summary: Update flight by num
+      tags:
+      - Schedule
+  /user/sessions:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Session'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+      summary: Retrieve user sessions by their id
+      tags:
+      - User
   /users:
     get:
       consumes:
@@ -122,6 +359,42 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorMessage'
       summary: List of employee users
+      tags:
+      - User
+  /users/ban:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: scheme of user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              allOf:
+              - type: boolean
+              - properties:
+                  data1:
+                    type: boolean
+                type: object
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorMessage'
+      summary: Ban user by their id
       tags:
       - User
   /users/create:

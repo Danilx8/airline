@@ -68,3 +68,18 @@ func (r routeRepository) GetAllRoutes(routes *[]domain.Route) error {
 	}
 	return nil
 }
+
+func (r routeRepository) GetRouteIDByFromAndTo(from string, to string) (int, error) {
+	var route domain.Route
+	if err := r.db.Table("Routes").
+		Preload("DepartureAirport").
+		Preload("ArrivalAirport").
+		Joins("JOIN Airports AS DepartureAirport ON DepartureAirport.ID = Routes.DepartureAirportID").
+		Where("DepartureAirport.IATACode = ?", from).
+		Joins("JOIN Airports AS ArrivalAirport ON ArrivalAirport.ID = Routes.ArrivalAirportID").
+		Where("ArrivalAirport.IATACode = ?", to).
+		Find(&route).Error; err != nil {
+		return 0, err
+	}
+	return route.ID, nil
+}

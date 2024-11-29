@@ -19,4 +19,5 @@ type RouteRepository interface {
 	GetByArrivalID(route *Route, arrId int) error
 	GetByDepartureIDAndArrivalID(route *Route, depId, arrId int) error
 	GetAllRoutes(routes *[]Route) error
+	GetRouteIDByFromAndTo(from string, to string) (int, error)
 }

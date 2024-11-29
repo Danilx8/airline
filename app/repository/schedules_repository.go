@@ -45,7 +45,6 @@ func (s *scheduleRepository) GetSchedules(schedules *[]domain.Schedules, default
 			Joins("JOIN Airports AS ArrivalAirport ON ArrivalAirport.ID = Routes.ArrivalAirportID").
 			Where("ArrivalAirport.IATACode = ?", defaultQuery["to"])
 	}
-	fmt.Println(defaultQuery)
 	if defaultQuery["outbound"] != "" {
 		query = query.Where("Date = ?", defaultQuery["outbound"])
 	}
@@ -93,4 +92,51 @@ func (s *scheduleRepository) AddRoute(schedule *domain.Schedules) error {
 		return err
 	}
 	return nil
+}
+
+func (s *scheduleRepository) EditRoute(routeId int, schedule *domain.Schedules) error {
+	schedId := s.GetIDByFields(routeId, schedule)
+	if schedId == 0 {
+		return fmt.Errorf("Not found record")
+	}
+	scheduleOld := &domain.Schedules{}
+	result := s.db.Table("Schedules").
+		Where("ID = ?", schedId).
+		First(scheduleOld)
+
+	if result.Error != nil {
+		return fmt.Errorf("failed to fetch schedule with id %d: %w", schedule.ID, result.Error)
+	}
+	scheduleVal := reflect.ValueOf(schedule).Elem()
+	scheduleOldVal := reflect.ValueOf(scheduleOld).Elem()
+
+	for i := 0; i < scheduleVal.NumField(); i++ {
+		value := scheduleVal.Field(i)
+		if !value.IsValid() || scheduleVal.Type().Field(i).Name == "ID" {
+			continue
+		}
+		scheduleOldVal.Field(i).Set(value)
+	}
+
+	result = s.db.Table("Schedules").Save(scheduleOld)
+	if result.Error != nil {
+		return fmt.Errorf("failed to update schedule with id %d: %w", schedule.ID, result.Error)
+	}
+
+	return nil
+}
+
+func (s *scheduleRepository) GetIDByFields(routeId int, schedule *domain.Schedules) int {
+	var resultSchedule domain.Schedules
+	if err := s.db.Table("Schedules").
+		Where("Date = ?", schedule.Date).
+		Where("Time = ?", schedule.Time).
+		Where("AircraftID = ?", schedule.AircraftID).
+		Where("RouteID = ?", routeId).
+		Where("EconomyPrice = ?", schedule.EconomyPrice).
+		Where("FlightNumber = ?", schedule.FlightNumber).
+		Find(&resultSchedule).Error; err != nil {
+		return 0
+	}
+	return resultSchedule.ID
 }

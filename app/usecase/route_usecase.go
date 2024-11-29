@@ -38,3 +38,11 @@ func (r *RouteUsecase) GetByDepatureIDAndArrivalID(c *gin.Context, depId, arrId 
 	}
 	return &route, nil
 }
+
+func (r *RouteUsecase) GetRouteIDByFromAndTo(c *gin.Context, from string, to string) (int, error) {
+	routeId, err := r.routeRepository.GetRouteIDByFromAndTo(from, to)
+	if err != nil {
+		return 0, err
+	}
+	return routeId, nil
+}

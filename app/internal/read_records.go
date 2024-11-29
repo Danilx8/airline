@@ -20,10 +20,14 @@ func ReadRecords(r io.Reader, formResponse *domain.FormResponse) ([][]string, er
 		record, err = reader.Read()
 		if errors.Is(err, io.EOF) {
 			fmt.Println(err)
+			formResponse.SuccessfulChanges -= 1
 			break
 		} else if errors.Is(err, csv.ErrFieldCount) {
 			formResponse.RecordWithMissingFields += 1
 			continue
+		} else if err != nil {
+			fmt.Println(err)
+			break
 		}
 		records = append(records, record)
 	}

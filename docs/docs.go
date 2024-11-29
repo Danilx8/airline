@@ -75,6 +75,187 @@ const docTemplate = `{
                 }
             }
         },
+        "/schedules": {
+            "get": {
+                "description": "get schedule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schedule"
+                ],
+                "summary": "List of schedule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order of routes [date, ticketPrice, ticketStatus]",
+                        "name": "order",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "from of routes",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "to of routes",
+                        "name": "to",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "outbound of routes [1970-10-24]",
+                        "name": "outbound",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "flight number of routes [000]",
+                        "name": "flightNumber",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Schedules"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/schedules/file": {
+            "post": {
+                "description": "Load file with schedule",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schedule"
+                ],
+                "summary": "Load file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "account image",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FormResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/schedules/flight": {
+            "put": {
+                "description": "update flight",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schedule"
+                ],
+                "summary": "Update flight by num",
+                "parameters": [
+                    {
+                        "description": "scheme of schedules",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Schedules"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Schedules"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/sessions": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Retrieve user sessions by their id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Session"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "get employees",
@@ -96,6 +277,66 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/domain.User"
                             }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/ban": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Ban user by their id",
+                "parameters": [
+                    {
+                        "description": "scheme of user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "allOf": [
+                                    {
+                                        "type": "boolean"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "data1": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorMessage"
                         }
                     },
                     "500": {
@@ -244,6 +485,60 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Aircrafts": {
+            "type": "object",
+            "properties": {
+                "businessSeats": {
+                    "type": "integer"
+                },
+                "economySeats": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "makeModel": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "totalSeats": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Airports": {
+            "type": "object",
+            "properties": {
+                "country": {
+                    "$ref": "#/definitions/domain.Countries"
+                },
+                "countryID": {
+                    "type": "integer"
+                },
+                "iatacode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Countries": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ErrorMessage": {
             "type": "object",
             "properties": {
@@ -252,6 +547,20 @@ const docTemplate = `{
                 },
                 "header": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.FormResponse": {
+            "type": "object",
+            "properties": {
+                "duplicateRecords": {
+                    "type": "integer"
+                },
+                "recordWithMissingFields": {
+                    "type": "integer"
+                },
+                "successfulChanges": {
+                    "type": "integer"
                 }
             }
         },
@@ -284,6 +593,116 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.Office": {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "type": "string"
+                },
+                "countryID": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Route": {
+            "type": "object",
+            "properties": {
+                "arrivalAirport": {
+                    "$ref": "#/definitions/domain.Airports"
+                },
+                "arrivalAirportID": {
+                    "type": "integer"
+                },
+                "departureAirport": {
+                    "$ref": "#/definitions/domain.Airports"
+                },
+                "departureAirportID": {
+                    "type": "integer"
+                },
+                "distance": {
+                    "type": "number"
+                },
+                "flightTime": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Schedules": {
+            "type": "object",
+            "properties": {
+                "BussinesPrice": {
+                    "type": "number"
+                },
+                "FirstClassPrice": {
+                    "type": "number"
+                },
+                "aircraft": {
+                    "$ref": "#/definitions/domain.Aircrafts"
+                },
+                "aircraftID": {
+                    "type": "integer"
+                },
+                "confirmed": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "economyPrice": {
+                    "type": "number"
+                },
+                "flightNumber": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "route": {
+                    "$ref": "#/definitions/domain.Route"
+                },
+                "routeID": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Session": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "loginTime": {
+                    "type": "string"
+                },
+                "logoutReason": {
+                    "type": "string"
+                },
+                "logoutTime": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.User": {
             "type": "object",
             "properties": {
@@ -305,6 +724,9 @@ const docTemplate = `{
                 "lastName": {
                     "type": "string"
                 },
+                "office": {
+                    "$ref": "#/definitions/domain.Office"
+                },
                 "officeID": {
                     "type": "integer"
                 },
@@ -312,7 +734,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "roleID": {
-                    "description": "Office    Office //` + "`" + `gorm:\"column:OfficeID;foreignKey:ID\"` + "`" + `",
                     "type": "integer"
                 }
             }

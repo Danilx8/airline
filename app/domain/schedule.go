@@ -18,4 +18,7 @@ type Schedules struct {
 type ScheduleRepository interface {
 	GetSchedules(schedules *[]Schedules, defaultQuery map[string]string) error
 	UpdateFlightByNum(schedule *Schedules) error
+	AddRoute(schedule *Schedules) error
+	EditRoute(id int, schedule *Schedules) error
+	GetIDByFields(routeId int, schedule *Schedules) int
 }

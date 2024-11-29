@@ -44,25 +44,54 @@ func (s *ScheduleUsecase) UpdateFlightByNum(c *gin.Context, flight *domain.Sched
 }
 
 func (s *ScheduleUsecase) FormHandler(c *gin.Context, file io.Reader) (*domain.FormResponse, error) {
-	var formResponse domain.FormResponse
+	formResponse := domain.FormResponse{}
 	records, err := internal.ReadRecords(file, &formResponse)
 	if !errors.Is(err, io.EOF) {
 		return nil, err
 	}
 	mask := internal.CheckDuplicate(records, &formResponse)
-
 	var recordModel domain.Record
 	for i := range records {
 		if mask[i] {
 			continue
 		}
-		internal.ParsingRecord(records[i], &recordModel)
+		err = internal.ParsingRecord(records[i], &recordModel)
+		if err != nil {
+			formResponse.SuccessfulChanges -= 1
+			continue
+		}
+		routeId, err := s.routeUsecase.GetRouteIDByFromAndTo(c, recordModel.From, recordModel.To)
+		if err != nil {
+			formResponse.SuccessfulChanges -= 1
+			continue
+		}
+		scheduleRow := domain.Schedules{
+			Date:         recordModel.Date,
+			Time:         recordModel.Time,
+			FlightNumber: recordModel.FlightNumber,
+			EconomyPrice: recordModel.EconomyPrice,
+			RouteID:      routeId,
+			AircraftID:   recordModel.AircraftID,
+			Confirmed:    recordModel.Confirmed,
+		}
 		switch recordModel.Type {
 		case "ADD":
-
+			schedId := s.scheduleRepository.GetIDByFields(routeId, &scheduleRow)
+			if schedId != 0 {
+				formResponse.DuplicateRecords += 1
+				continue
+			}
+			err = s.scheduleRepository.AddRoute(&scheduleRow)
+			if err != nil {
+				formResponse.SuccessfulChanges -= 1
+			}
 		case "EDIT":
-
+			err = s.scheduleRepository.EditRoute(routeId, &scheduleRow)
+			if err != nil {
+				formResponse.SuccessfulChanges -= 1
+			}
 		default:
+			return nil, fmt.Errorf("error in records loop")
 		}
 	}
 
@@ -70,5 +99,5 @@ func (s *ScheduleUsecase) FormHandler(c *gin.Context, file io.Reader) (*domain.F
 	if formResponse.SuccessfulChanges < 0 {
 		return nil, fmt.Errorf("Invalid data in form")
 	}
-	return nil, nil
+	return &formResponse, nil
 }

@@ -7,7 +7,7 @@ type Record struct {
 	FlightNumber string
 	From         string
 	To           string
-	AircraftID   string
-	EconomyPrice string
-	Confirmed    string
+	AircraftID   int
+	EconomyPrice float64
+	Confirmed    int
 }
