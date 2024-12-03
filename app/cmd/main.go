@@ -3,6 +3,7 @@ package main
 import (
 	"app/app/api/route"
 	"app/app/bootstrap"
+	"github.com/gin-contrib/cors"
 
 	"fmt"
 	"log"
@@ -54,7 +55,7 @@ func main() {
 	timeout := time.Duration(env.ContextTimeout) * time.Second
 
 	engine := gin.Default()
-
+	engine.Use(cors.Default())
 	route.Setup(env, timeout, db, engine)
 
 	err = engine.Run(env.ServerAddress)
