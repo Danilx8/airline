@@ -27,8 +27,8 @@ import (
 //	@host		localhost:8080
 //	@BasePath	/
 
-//	@externalDocs.description	OpenAPI
-//	@externalDocs.url			https://swagger.io/resources/open-api/
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -44,6 +44,7 @@ func main() {
 	app, err := bootstrap.App()
 	if err != nil {
 		log.Fatalf("Error while init application: %s\n", err.Error())
+		return
 	}
 
 	env := app.Env
