@@ -8,6 +8,7 @@ import (
 	"app/app/usecase"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -34,6 +35,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engi
 	}
 
 	publicRouter := gin.Group("")
+	publicRouter.Use(cors.Default())
 	NewAuthRouter(env, timeout, db, publicRouter)
 	NewRoutesRouter(env, routeController, publicRouter)
 	NewScheduleRouter(env, scheduleController, publicRouter)
@@ -41,5 +43,6 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, gin *gin.Engi
 
 	privateRouter := gin.Group("")
 	privateRouter.Use(authMiddleware.CheckAuth)
+	privateRouter.Use(cors.Default())
 	NewUserRouter(env, userController, privateRouter)
 }
