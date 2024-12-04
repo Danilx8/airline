@@ -33,7 +33,7 @@ func (s *scheduleRepository) GetSchedules(schedules *[]domain.Schedules, default
 		Preload("Route.ArrivalAirport").
 		Preload("Route.ArrivalAirport.Country").
 		Joins("JOIN Routes ON Routes.ID = Schedules.RouteID").
-		Order(defaultQuery["order"])
+		Order(orderMapper[defaultQuery["order"]])
 
 	if defaultQuery["from"] != "" {
 		query = query.
