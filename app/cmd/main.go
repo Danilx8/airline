@@ -55,7 +55,10 @@ func main() {
 	timeout := time.Duration(env.ContextTimeout) * time.Second
 
 	engine := gin.Default()
-	engine.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowCredentials = true
+	engine.Use(cors.New(config))
 	route.Setup(env, timeout, db, engine)
 
 	err = engine.Run(env.ServerAddress)
