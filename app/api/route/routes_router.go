@@ -8,5 +8,5 @@ import (
 )
 
 func NewRoutesRouter(env *bootstrap.Env, routeController controller.RouteController, group *gin.RouterGroup) {
-	group.GET("routes/", routeController.GetFlight)
+	group.GET("routes/query", routeController.GetFlight)
 }

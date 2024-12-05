@@ -158,7 +158,7 @@ func (userController *UserController) GetUsersSessions(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param        data    body   domain.UserId true  "scheme of user"
-// @Success 200 {object} jsonresult.JSONResult{data1=bool}
+// @Success 200 {object} map[string]bool{data1=bool}
 // @Failure 400 {object} domain.ErrorMessage
 // @Failure 500 {object} domain.ErrorMessage
 // @Router /users/ban [post]

@@ -8,3 +8,6 @@ type Airports struct {
 	Name      string    `gorm:"column:Name"`
 }
 
+func (Airports) TableName() string {
+	return "Airports"
+}

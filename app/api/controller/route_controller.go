@@ -35,5 +35,12 @@ func (r *RouteController) GetFlight(c *gin.Context) {
 		})
 		return
 	}
+	if route == nil {
+		c.JSON(http.StatusNotFound, domain.ErrorMessage{
+			Header:      "Not found",
+			Description: "Not found route by query",
+		})
+		return
+	}
 	c.JSON(http.StatusOK, route)
 }

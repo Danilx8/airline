@@ -7,11 +7,17 @@ type Route struct {
 	ArrivalAirportID   int      `gorm:"column:ArrivalAirportID"`
 	ArrivalAirport     Airports `gorm:"column:ArrivalAirportID;foreignKey:ArrivalAirportID"`
 	Distance           float32  `gorm:"column:Distance"`
-	FlightTime         []uint8  `gorm:"column:FlightTime"`
+	FlightTime         string   `gorm:"column:FlightTime"`
+}
+
+func (Route) TableName() string {
+	return "Routes"
 }
 
 type RouteRepository interface {
-	GetByDepartureID(depId int) (*Route, error)
-	GetByArrivalID(arrId int) (*Route, error)
-	GetByDepartureIDAndArrivalID(depId, arrId int) (*Route, error)
+	GetByDepartureID(route *Route, depId int) error
+	GetByArrivalID(route *Route, arrId int) error
+	GetByDepartureIDAndArrivalID(route *Route, depId, arrId int) error
+	GetAllRoutes(routes *[]Route) error
+	GetRouteIDByFromAndTo(from string, to string) (int, error)
 }
