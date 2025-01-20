@@ -56,7 +56,7 @@ func main() {
 
 	engine := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowOrigins = []string{env.FrontendUrl}
 	config.AllowCredentials = true
 	engine.Use(cors.New(config))
 	route.Setup(env, timeout, db, engine)

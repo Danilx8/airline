@@ -3,9 +3,9 @@ package repository
 import (
 	"app/app/domain"
 	"fmt"
-	"reflect"
-
 	"gorm.io/gorm"
+	"reflect"
+	"time"
 )
 
 var orderMapper map[string]string = map[string]string{
@@ -70,12 +70,26 @@ func (s *scheduleRepository) UpdateFlightByNum(schedule *domain.Schedules) error
 	scheduleVal := reflect.ValueOf(schedule).Elem()
 	scheduleOldVal := reflect.ValueOf(scheduleOld).Elem()
 
+	date, _ := time.Parse(time.DateOnly, scheduleOldVal.FieldByName("Date").String())
+	scheduleOldVal.FieldByName("Date").Set(reflect.ValueOf(date.Format(time.DateOnly)))
+
 	for i := 0; i < scheduleVal.NumField(); i++ {
 		value := scheduleVal.Field(i)
 		if !value.IsValid() || scheduleVal.Type().Field(i).Name == "ID" || value.IsZero() {
 			continue
 		}
-		scheduleOldVal.Field(i).Set(value)
+
+		if value.IsValid() && scheduleVal.Type().Field(i).Name == "Date" && !value.IsZero() {
+			date, _ := time.Parse(time.DateOnly, value.String())
+			scheduleOldVal.Field(i).Set(reflect.ValueOf(date.Format(time.DateOnly)))
+		} else if value.IsValid() && scheduleVal.Type().Field(i).Name == "Time" && !value.IsZero() {
+			timeOnly, _ := time.Parse(time.TimeOnly, value.String())
+			scheduleOldVal.Field(i).Set(reflect.ValueOf(timeOnly.Format(time.TimeOnly)))
+		} else if scheduleVal.Type().Field(i).Name == "confirmed" {
+			scheduleOldVal.Field(i).Set(value)
+		} else {
+			scheduleOldVal.Field(i).Set(value)
+		}
 	}
 
 	result = s.db.Table("Schedules").Save(scheduleOld)
